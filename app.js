@@ -8,13 +8,20 @@ dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 7000;
 const app = express();
+const allowedOrigins = [
+  process.env.MAIN_APP_URL,
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+];
 
+// Middleware
 app.use(
   cors({
-    origin: "*",
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-
 app.use(express.json());
 
 // Routes
