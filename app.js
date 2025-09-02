@@ -12,9 +12,8 @@ const allowedOrigins = [
   process.env.MAIN_APP_URL,
   process.env.FRONTEND_URL,
   "http://localhost:5173",
-];
+].filter(Boolean);
 
-// Middleware
 app.use(
   cors({
     origin: allowedOrigins,
@@ -22,6 +21,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+
 app.use(express.json());
 
 // Routes
