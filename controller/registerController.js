@@ -178,3 +178,29 @@ export const getApplicationById = async (req, res) => {
     });
   }
 };
+
+export const deleteApplication = async (req, res) => {
+  try {
+    const deleted = await InternshipApplication.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!deleted) {
+      return res.status(404).json({
+        hasError: true,
+        message: "Application not found",
+      });
+    }
+
+    res.status(200).json({
+      hasError: false,
+      message: "Application deleted successfully",
+      data: deleted,
+    });
+  } catch (err) {
+    res.status(500).json({
+      hasError: true,
+      message: err.message,
+    });
+  }
+};
