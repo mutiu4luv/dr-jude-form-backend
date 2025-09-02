@@ -24,9 +24,11 @@ const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
-      callback(null, true); // Accept requests from any origin
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      callback(null, origin); // Reflect the origin header
     },
-    credentials: true, // Allow cookies/auth headers
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
