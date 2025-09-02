@@ -36,7 +36,7 @@ export const createApplication = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
-        message: "Please fill in all required fields.",
+        message: "Missing required fields.",
         requiredFields: [
           "fullName",
           "email",
@@ -96,7 +96,36 @@ export const createApplication = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error creating application:", err.message);
+    console.error("Error creating application:", err);
+
+    // 🔹 Handle Mongoose validation errors
+    if (err.name === "ValidationError") {
+      const errors = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed.",
+        errors,
+      });
+    }
+
+    // 🔹 Handle duplicate key errors (unique fields like email)
+    if (err.code === 11000) {
+      const duplicateField = Object.keys(err.keyValue)[0];
+      return res.status(409).json({
+        success: false,
+        message: `Duplicate entry for ${duplicateField}: ${err.keyValue[duplicateField]}`,
+      });
+    }
+
+    // 🔹 Handle cast errors (e.g., invalid ObjectId)
+    if (err.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid value for ${err.path}: ${err.value}`,
+      });
+    }
+
+    // 🔹 Default: Internal Server Error
     return res.status(500).json({
       success: false,
       message: "Internal server error. Please try again later.",
