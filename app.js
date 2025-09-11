@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import internshipRoutes from "./routes/intenshipRoutes.js";
+import complaintRoutes from "./routes/complain.js";
 dotenv.config();
 
 const MONGO_URI = process.env.MONGO_URI;
@@ -37,6 +38,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/user/", internshipRoutes);
+app.use("/api/complaints", complaintRoutes);
 
 // Connect MongoDB
 if (!MONGO_URI) {
