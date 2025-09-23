@@ -1,4 +1,5 @@
 import InternshipApplication from "../model/model.js";
+
 // @desc Submit new internship application
 // @route POST /api/applications
 
@@ -14,8 +15,6 @@ export const createApplication = async (req, res) => {
       major,
       minor,
       graduationDate,
-      resume,
-      transcript,
       source,
       startDate,
       endDate,
@@ -26,7 +25,10 @@ export const createApplication = async (req, res) => {
       certificationConfirmed,
     } = req.body;
 
-    // 1. Basic validation (backend side)
+    // ✅ Uploaded files from Cloudinary
+    const resume = req.files?.resume?.[0]?.path || null;
+    const transcript = req.files?.transcript?.[0]?.path || null;
+
     if (
       !fullName ||
       !email ||
@@ -37,17 +39,9 @@ export const createApplication = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Missing required fields.",
-        requiredFields: [
-          "fullName",
-          "email",
-          "phone",
-          "residency",
-          "certificationConfirmed",
-        ],
       });
     }
 
-    // 2. Check if applicant already applied with the same email
     const existing = await InternshipApplication.findOne({ email });
     if (existing) {
       return res.status(409).json({
@@ -56,7 +50,6 @@ export const createApplication = async (req, res) => {
       });
     }
 
-    // 3. Create and save new application
     const newApplication = new InternshipApplication({
       fullName,
       email,
@@ -67,8 +60,8 @@ export const createApplication = async (req, res) => {
       major,
       minor,
       graduationDate,
-      resume,
-      transcript,
+      resume, // ✅ Cloudinary URL saved
+      transcript, // ✅ Cloudinary URL saved
       source,
       startDate,
       endDate,
@@ -81,56 +74,16 @@ export const createApplication = async (req, res) => {
 
     await newApplication.save();
 
-    // 4. Return success response
     return res.status(201).json({
       success: true,
       message: "Application submitted successfully!",
-      data: {
-        id: newApplication._id,
-        fullName: newApplication.fullName,
-        email: newApplication.email,
-        phone: newApplication.phone,
-        residency: newApplication.residency,
-        university: newApplication.university,
-        createdAt: newApplication.createdAt,
-        resume: newApplication.resume,
-        transcript: newApplication.transcript,
-      },
+      data: newApplication,
     });
   } catch (err) {
     console.error("Error creating application:", err);
-
-    // 🔹 Handle Mongoose validation errors
-    if (err.name === "ValidationError") {
-      const errors = Object.values(err.errors).map((e) => e.message);
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed.",
-        errors,
-      });
-    }
-
-    // 🔹 Handle duplicate key errors (unique fields like email)
-    if (err.code === 11000) {
-      const duplicateField = Object.keys(err.keyValue)[0];
-      return res.status(409).json({
-        success: false,
-        message: `Duplicate entry for ${duplicateField}: ${err.keyValue[duplicateField]}`,
-      });
-    }
-
-    // 🔹 Handle cast errors (e.g., invalid ObjectId)
-    if (err.name === "CastError") {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid value for ${err.path}: ${err.value}`,
-      });
-    }
-
-    // 🔹 Default: Internal Server Error
     return res.status(500).json({
       success: false,
-      message: "Internal server error. Please try again later.",
+      message: "Internal server error",
       error: err.message,
     });
   }
