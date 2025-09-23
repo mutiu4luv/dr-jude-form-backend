@@ -9,30 +9,31 @@ dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 7000;
 const app = express();
-// const allowedOrigins = [
-//   process.env.MAIN_APP_URL,
-//   process.env.FRONTEND_URL,
-//   "http://localhost:5173",
-// ].filter(Boolean);
+const allowedOrigins = [
+  process.env.FRONTEND_URL_MAIN,
+  process.env.MAIN_APP_URL,
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+].filter(Boolean);
 
-// app.use(
-//   cors({
-//     origin: allowedOrigins,
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//   })
-// );
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-      callback(null, origin); // Reflect the origin header
-    },
+    origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       // Allow requests with no origin (like mobile apps or curl)
+//       if (!origin) return callback(null, true);
+//       callback(null, origin); // Reflect the origin header
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//   })
+// );
 
 app.use(express.json());
 
