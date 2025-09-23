@@ -93,6 +93,8 @@ export const createApplication = async (req, res) => {
         residency: newApplication.residency,
         university: newApplication.university,
         createdAt: newApplication.createdAt,
+        resume: newApplication.resume,
+        transcript: newApplication.transcript,
       },
     });
   } catch (err) {
