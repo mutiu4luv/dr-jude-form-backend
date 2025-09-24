@@ -43,7 +43,7 @@ app.use("/api/complaints", complaintRoutes);
 
 // Connect MongoDB
 if (!MONGO_URI) {
-  console.error("❌ MONGO_URI is not defined in your .env file");
+  console.error("❌ MONGO_URI is not defined in your .env file now");
   process.exit(1); // stop the server if no DB URI
 }
 
@@ -59,6 +59,6 @@ mongoose
     });
   })
   .catch((err) => {
-    console.error("❌ MongoDB connection error:", err.message);
+    console.error("❌ MongoDatBase connection error:", err.message);
     process.exit(1); // stop server if DB fails
   });
