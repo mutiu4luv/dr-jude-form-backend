@@ -3,88 +3,33 @@ import InternshipApplication from "../model/model.js";
 // @desc Submit new internship application
 // @route POST /api/applications
 
+// controllers/registerController.js
+
 export const createApplication = async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-      phone,
-      linkedIn,
-      residency,
-      university,
-      major,
-      minor,
-      graduationDate,
-      source,
-      startDate,
-      endDate,
-      whyIntern,
-      coreService,
-      longTermGoal,
-      values,
-      certificationConfirmed,
-    } = req.body;
+    const application = new InternshipApplication({ ...req.body });
+    await application.save();
 
-    // ✅ Uploaded files from Cloudinary
-    const resume = req.files?.resume?.[0]?.secure_url || null;
-    const transcript = req.files?.transcript?.[0]?.secure_url || null;
-
-    if (
-      !fullName ||
-      !email ||
-      !phone ||
-      !residency ||
-      certificationConfirmed === undefined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields.",
-      });
-    }
-
-    const existing = await InternshipApplication.findOne({ email });
-    if (existing) {
-      return res.status(409).json({
-        success: false,
-        message: "An application with this email already exists.",
-      });
-    }
-
-    const newApplication = new InternshipApplication({
-      fullName,
-      email,
-      phone,
-      linkedIn,
-      residency,
-      university,
-      major,
-      minor,
-      graduationDate,
-      resume, // ✅ Cloudinary URL saved
-      transcript, // ✅ Cloudinary URL saved
-      source,
-      startDate,
-      endDate,
-      whyIntern,
-      coreService,
-      longTermGoal,
-      values,
-      certificationConfirmed,
-    });
-
-    await newApplication.save();
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Application submitted successfully!",
-      data: newApplication,
+      data: application,
     });
   } catch (err) {
-    console.error("Error creating application:", err);
-    return res.status(500).json({
+    // ✅ Log full error details for debugging
+    console.error("❌ Error creating application:", {
+      message: err.message,
+      name: err.name,
+      code: err.code,
+      errors: err.errors,
+      stack: err.stack,
+    });
+
+    res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Server error while creating application",
       error: err.message,
+      details: err.errors || null, // return field-specific validation errors if available
     });
   }
 };
