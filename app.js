@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import express from "express";
-import cors from "cors";
+// import cors from "cors";
 import internshipRoutes from "./routes/intenshipRoutes.js";
 import complaintRoutes from "./routes/complain.js";
-// import corsMiddleware from "./config/cors.js";
+import corsMiddleware from "./config/cors.js";
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 7000;
 const app = express();
 
-// app.use(corsMiddleware);
+app.use(corsMiddleware);
 // const allowedOrigins = [
 //   process.env.FRONTEND_URL_MAIN,
 //   process.env.MAIN_APP_URL,
@@ -28,13 +28,17 @@ const app = express();
 //     methods: ["GET", "POST", "PUT", "DELETE"],
 //   })
 // );
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       // Allow requests with no origin (like mobile apps or curl)
+//       if (!origin) return callback(null, true);
+//       callback(null, origin); // Reflect the origin header
+//     },
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//   })
+// );
 
 app.use(express.json());
 
