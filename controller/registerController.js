@@ -26,8 +26,8 @@ export const createApplication = async (req, res) => {
     } = req.body;
 
     // ✅ Uploaded files from Cloudinary
-    const resume = req.files?.resume?.[0]?.path || null;
-    const transcript = req.files?.transcript?.[0]?.path || null;
+    const resume = req.files?.resume?.[0]?.secure_url || null;
+    const transcript = req.files?.transcript?.[0]?.secure_url || null;
 
     if (
       !fullName ||

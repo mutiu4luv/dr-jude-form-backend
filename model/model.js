@@ -2,23 +2,22 @@ import mongoose from "mongoose";
 const internshipApplicationSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },
     linkedIn: { type: String },
-    residency: { type: String, enum: ["Yes", "No"], required: true },
-
+    residency: { type: String, required: true },
     university: { type: String },
     major: { type: String },
     minor: { type: String },
-    graduationDate: { type: Date },
+    graduationDate: { type: String },
 
-    resume: { type: String }, // store file path or URL
-    transcript: { type: String }, // store file path or URL
+    // ✅ Store Cloudinary URLs
+    resume: { type: String, default: null },
+    transcript: { type: String, default: null },
 
     source: { type: String },
-    startDate: { type: Date },
-    endDate: { type: Date },
-
+    startDate: { type: String },
+    endDate: { type: String },
     whyIntern: { type: String },
     coreService: { type: String },
     longTermGoal: { type: String },
