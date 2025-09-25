@@ -7,29 +7,65 @@ import InternshipApplication from "../model/model.js";
 
 export const createApplication = async (req, res) => {
   try {
-    const application = new InternshipApplication({ ...req.body });
+    const {
+      fullName,
+      email,
+      phone,
+      linkedIn,
+      residency,
+      university,
+      major,
+      minor,
+      graduationDate,
+      source,
+      startDate,
+      endDate,
+      whyIntern,
+      coreService,
+      longTermGoal,
+      values,
+      certificationConfirmed,
+    } = req.body;
+
+    // ✅ Cloudinary uploads give you `req.files[field][0].path` as URL
+    const resume = req.files?.resume?.[0]?.path || null;
+    const transcript = req.files?.transcript?.[0]?.path || null;
+
+    const application = new InternshipApplication({
+      fullName,
+      email,
+      phone,
+      linkedIn,
+      residency,
+      university,
+      major,
+      minor,
+      graduationDate,
+      resume, // <-- Cloudinary URL stored
+      transcript, // <-- Cloudinary URL stored
+      source,
+      startDate,
+      endDate,
+      whyIntern,
+      coreService,
+      longTermGoal,
+      values,
+      certificationConfirmed,
+    });
+
     await application.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Application submitted successfully!",
       data: application,
     });
   } catch (err) {
-    // ✅ Log full error details for debugging
-    console.error("❌ Error creating application:", {
-      message: err.message,
-      name: err.name,
-      code: err.code,
-      errors: err.errors,
-      stack: err.stack,
-    });
-
-    res.status(500).json({
+    console.error("❌ Error creating application:", err);
+    return res.status(500).json({
       success: false,
       message: "Server error while creating application",
       error: err.message,
-      details: err.errors || null, // return field-specific validation errors if available
     });
   }
 };
