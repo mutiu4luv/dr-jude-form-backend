@@ -12,8 +12,8 @@ const internshipApplicationSchema = new mongoose.Schema(
     graduationDate: { type: String },
 
     // ✅ Store Cloudinary URLs
-    resume: { type: String, required: true },
-    transcript: { type: String, required: true },
+    resume: { type: String, required: false },
+    transcript: { type: String, required: false },
 
     source: { type: String },
     startDate: { type: String },

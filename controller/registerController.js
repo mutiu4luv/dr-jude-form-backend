@@ -62,7 +62,24 @@ export const createApplication = async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Error creating application:", err);
-    return res.status(500).json({
+
+    if (err.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        error: err.message,
+      });
+    }
+
+    if (err.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "Duplicate entry",
+        error: err.keyValue,
+      });
+    }
+
+    res.status(500).json({
       success: false,
       message: "Server error while creating application",
       error: err.message,
