@@ -16,6 +16,7 @@ const allowedOrigins = [
   "http://localhost:5173",
 ].filter(Boolean);
 
+console.log(allowedOrigins);
 app.use(
   cors({
     origin: allowedOrigins,
