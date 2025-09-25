@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import express from "express";
-// import cors from "cors";
+import cors from "cors";
 import internshipRoutes from "./routes/intenshipRoutes.js";
 import complaintRoutes from "./routes/complain.js";
 import corsMiddleware from "./config/cors.js";
@@ -13,6 +13,8 @@ const PORT = process.env.PORT || 7000;
 const app = express();
 
 app.use(corsMiddleware);
+app.use(cors({ origin: true, credentials: true }));
+
 // const allowedOrigins = [
 //   process.env.FRONTEND_URL_MAIN,
 //   process.env.MAIN_APP_URL,
