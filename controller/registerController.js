@@ -1,4 +1,5 @@
 import InternshipApplication from "../model/model.js";
+import cloudinary from "../config/cloudnary.js"; // ✅ use centralized config
 
 // @desc Submit new internship application
 // @route POST /api/applications
@@ -10,6 +11,8 @@ export const createApplication = async (req, res) => {
     let resumeUrl = null;
     let transcriptUrl = null;
 
+    console.log("📂 Uploaded files:", req.files);
+
     if (req.files?.resume) {
       const resumeUpload = await cloudinary.v2.uploader.upload(
         req.files.resume[0].path,
@@ -17,7 +20,6 @@ export const createApplication = async (req, res) => {
       );
       resumeUrl = resumeUpload.secure_url;
     }
-    console.log("📂 Uploaded files:", req.files);
 
     if (req.files?.transcript) {
       const transcriptUpload = await cloudinary.v2.uploader.upload(
@@ -41,7 +43,7 @@ export const createApplication = async (req, res) => {
       data: application,
     });
   } catch (err) {
-    console.error("❌ Error creating application:", err.message);
+    console.error("❌ Error creating application:", err);
     res.status(500).json({
       success: false,
       message: "Server error while creating application",
