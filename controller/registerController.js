@@ -7,78 +7,41 @@ import InternshipApplication from "../model/model.js";
 
 export const createApplication = async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-      phone,
-      linkedIn,
-      residency,
-      university,
-      major,
-      minor,
-      graduationDate,
-      source,
-      startDate,
-      endDate,
-      whyIntern,
-      coreService,
-      longTermGoal,
-      values,
-      certificationConfirmed,
-    } = req.body;
+    let resumeUrl = null;
+    let transcriptUrl = null;
 
-    // ✅ Cloudinary uploads give you `req.files[field][0].path` as URL
-    const resume = req.files?.resume?.[0]?.path || null;
-    const transcript = req.files?.transcript?.[0]?.path || null;
+    if (req.files?.resume) {
+      const resumeUpload = await cloudinary.v2.uploader.upload(
+        req.files.resume[0].path,
+        { resource_type: "auto" }
+      );
+      resumeUrl = resumeUpload.secure_url;
+    }
+    console.log("📂 Uploaded files:", req.files);
+
+    if (req.files?.transcript) {
+      const transcriptUpload = await cloudinary.v2.uploader.upload(
+        req.files.transcript[0].path,
+        { resource_type: "auto" }
+      );
+      transcriptUrl = transcriptUpload.secure_url;
+    }
 
     const application = new InternshipApplication({
-      fullName,
-      email,
-      phone,
-      linkedIn,
-      residency,
-      university,
-      major,
-      minor,
-      graduationDate,
-      resume, // <-- Cloudinary URL stored
-      transcript, // <-- Cloudinary URL stored
-      source,
-      startDate,
-      endDate,
-      whyIntern,
-      coreService,
-      longTermGoal,
-      values,
-      certificationConfirmed,
+      ...req.body,
+      resume: resumeUrl,
+      transcript: transcriptUrl,
     });
 
     await application.save();
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
-      message: "Application submitted successfully!",
+      message: "Application created successfully",
       data: application,
     });
   } catch (err) {
-    console.error("❌ Error creating application:", err);
-
-    if (err.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        error: err.message,
-      });
-    }
-
-    if (err.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message: "Duplicate entry",
-        error: err.keyValue,
-      });
-    }
-
+    console.error("❌ Error creating application:", err.message);
     res.status(500).json({
       success: false,
       message: "Server error while creating application",
