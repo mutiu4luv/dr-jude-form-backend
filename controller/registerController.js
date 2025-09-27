@@ -48,6 +48,7 @@ export const createApplication = async (req, res) => {
       success: false,
       message: "Server error while creating application",
       error: err.message,
+      stack: process.env.NODE_ENV !== "production" ? err.stack : undefined, // Optional: include stack trace
     });
   }
 };
