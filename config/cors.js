@@ -5,7 +5,7 @@ dotenv.config();
 
 const rawAllowedOrigins = [
   process.env.FRONTEND_URL_MAIN,
-  //   "https://www.upspaceconsulting.com",
+  "https://www.upspaceconsulting.com",
   process.env.MAIN_APP_URL,
   process.env.FRONTEND_URL,
   "http://localhost:5173",
